@@ -7,6 +7,8 @@ const genderValidation = (res, gender) => {
   } else if (genderPattern.test(gender)) {
     res.send({ error: "gender can't be empty" });
     return true;
+  } else {
+    return false;
   }
 };
 

@@ -10,6 +10,8 @@ const nameValidation = (res, name) => {
   } else if (name.length < 3 || name.length > 30) {
     res.json({ error: "username must be between 3 to 20 char" });
     return true;
+  } else {
+    return false;
   }
 };
 

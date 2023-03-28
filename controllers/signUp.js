@@ -3,8 +3,9 @@ const nameValidation = require("../utils/nameValidation");
 const emailValidation = require("../utils/emailValidation");
 const passwordValidation = require("../utils/passwordValidation");
 const genderValidation = require("../utils/genderValidation");
+const bcrypt = require("bcrypt");
 
-const signUp = async (req, res) => {
+const signUp = (req, res) => {
   const { name, email, password, gender } = req.body;
   const user = new User({
     name,
@@ -22,14 +23,18 @@ const signUp = async (req, res) => {
   } else if (genderValidation(res, gender)) {
     return;
   } else {
-    const existUser = await User.find({ email: email });
-    if (existUser.length === 0) {
-      return user
-        .save()
-        .then(() => res.send({ message: "registration successful!" }));
-    } else {
-      res.send({ error: "user already exist" });
-    }
+    bcrypt.hash(password, 15, async (err, hash) => {
+      user.password = hash;
+
+      const existUser = await User.find({ email: email });
+      if (existUser.length === 0) {
+        return user
+          .save()
+          .then(() => res.send({ message: "registration successful!" }));
+      } else {
+        res.send({ error: "user already exist" });
+      }
+    });
   }
 };
 

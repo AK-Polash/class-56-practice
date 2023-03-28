@@ -7,6 +7,8 @@ const emailValidation = (res, email) => {
   } else if (!emailPattern.test(email)) {
     res.send({ error: "valid email required" });
     return true;
+  } else {
+    return false;
   }
 };
 
