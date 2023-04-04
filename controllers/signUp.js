@@ -16,22 +16,32 @@ const signUp = (req, res) => {
     return;
   } else if (genderValidation(res, gender)) {
     return;
+  } else if (password.length < 8) {
+    return res.send({ error: "minimum 8 char required" });
   } else {
     bcrypt.hash(password, 10, async (err, hash) => {
-      const existUser = await User.find({ email: email });
-      const user = new User({
-        name,
-        email,
-        password: hash,
-        gender,
-      });
+      if (err) {
+        return res.send({ error: "unknown error!" });
+      }
 
-      if (existUser.length === 0) {
-        return user
-          .save()
-          .then(() => res.send({ message: "registration successful!" }));
-      } else {
-        res.send({ error: "user already exist" });
+      try {
+        const existUser = await User.find({ email: email });
+        const user = new User({
+          name,
+          email,
+          password: hash,
+          gender,
+        });
+
+        if (existUser.length === 0) {
+          return user
+            .save()
+            .then(() => res.send({ message: "registration successful!" }));
+        } else {
+          res.send({ error: "user already exist" });
+        }
+      } catch (err) {
+        return res.send({ error: "server error" });
       }
     });
   }
